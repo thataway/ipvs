@@ -5,8 +5,8 @@ import (
 	"strconv"
 
 	"github.com/pkg/errors"
-	"github.com/thataway/ipvs/pkg/ipvs"
 	ipvsAdm "github.com/thataway/ipvs/pkg/net/ipvs"
+	"github.com/thataway/protos/pkg/api/ipvs"
 )
 
 type (
@@ -71,7 +71,7 @@ func (identity *VirtualServerIdentityConv) FromPb(src *ipvs.VirtualServerIdentit
 		h := t.Address.GetHost()
 		p := strconv.Itoa(int(t.Address.GetPort()))
 		a := ipvsAdm.VirtualServerAddress{
-			NetworkProtocol: ipvsAdm.NetworkProtocol(ipvs.NetworkTransport2String[t.Address.Network]),
+			NetworkProtocol: ipvsAdm.NetworkProtocol(ipvsAdm.NetworkTransport2String[t.Address.Network]),
 			Address:         ipvsAdm.Address(net.JoinHostPort(h, p)),
 		}
 		if err := a.NetworkProtocol.Valid(); err != nil {
@@ -91,7 +91,7 @@ func (identity *VirtualServerIdentityConv) FromPb(src *ipvs.VirtualServerIdentit
 //ToPb to *ipvs.NetworkTransport
 func (conv NetworkProtocolConv) ToPb() (ipvs.NetworkTransport, error) {
 	const api = "NetworkProtocolConv/ToPb"
-	return ipvs.String2NetworkTransport[string(conv.NetworkProtocol)],
+	return ipvsAdm.String2NetworkTransport[string(conv.NetworkProtocol)],
 		errors.Wrap(conv.NetworkProtocol.Valid(), api)
 }
 
@@ -105,7 +105,7 @@ func (conv *VirtualServerConv) FromPb(src *ipvs.VirtualServer) error {
 	if err != nil {
 		return errors.Wrap(err, api)
 	}
-	ret.ScheduleMethod = ipvsAdm.ScheduleMethod(ipvs.ScheduleMethod2String[src.GetScheduleMethod()])
+	ret.ScheduleMethod = ipvsAdm.ScheduleMethod(ipvsAdm.ScheduleMethod2String[src.GetScheduleMethod()])
 	if err = ret.ScheduleMethod.Valid(); err != nil {
 		return errors.Wrap(err, api)
 	}
@@ -130,7 +130,7 @@ func (conv VirtualServerConv) ToPb() (*ipvs.VirtualServer, error) {
 	if err = conv.VirtualServer.ScheduleMethod.Valid(); err != nil {
 		return nil, errors.Wrap(err, api)
 	}
-	ret.ScheduleMethod = ipvs.String2ScheduleMethod[string(conv.VirtualServer.ScheduleMethod)]
+	ret.ScheduleMethod = ipvsAdm.String2ScheduleMethod[string(conv.VirtualServer.ScheduleMethod)]
 	return &ret, nil
 }
 
@@ -148,7 +148,7 @@ func (conv RealServerConv) ToPb() (*ipvs.RealServer, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, api)
 	}
-	ret.PacketForwarder = ipvs.String2PacketFwdMethod[string(conv.RealServer.PacketForwarder)]
+	ret.PacketForwarder = ipvsAdm.String2PacketFwdMethod[string(conv.RealServer.PacketForwarder)]
 	if ret.Address.Host, ret.Address.Port, err = conv.RealServer.ToHostPort(); err != nil {
 		return nil, errors.Wrap(err, api)
 	}
@@ -167,7 +167,7 @@ func (conv *RealServerConv) FromPb(src *ipvs.RealServer) error {
 		Weight:          src.GetWeight(),
 		UpperThreshold:  src.GetUpperThreshold(),
 		LowerThreshold:  src.GetLowerThreshold(),
-		PacketForwarder: ipvsAdm.PacketForwarder(ipvs.PacketFwdMethod2String[src.GetPacketForwarder()]),
+		PacketForwarder: ipvsAdm.PacketForwarder(ipvsAdm.PacketFwdMethod2String[src.GetPacketForwarder()]),
 	}
 	if e := ret.PacketForwarder.Valid(); e != nil {
 		return errors.Wrap(e, api)

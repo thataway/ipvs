@@ -2,8 +2,6 @@ package ipvs
 
 import (
 	"context"
-	_ "embed"
-	"encoding/json"
 	"fmt"
 	"net"
 	"net/url"
@@ -18,8 +16,9 @@ import (
 	"github.com/thataway/common-lib/pkg/jsonview"
 	"github.com/thataway/common-lib/pkg/parallel"
 	"github.com/thataway/common-lib/server"
-	"github.com/thataway/ipvs/pkg/ipvs"
 	ipvsAdm "github.com/thataway/ipvs/pkg/net/ipvs"
+	apiUtils "github.com/thataway/protos/pkg/api"
+	"github.com/thataway/protos/pkg/api/ipvs"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
@@ -41,21 +40,13 @@ func NewIpvsAdminService(ctx context.Context, adm ipvsAdm.Admin) server.APIServi
 	return ret
 }
 
-//GetSwaggerDocs get swagger spec docs
-func GetSwaggerDocs() (*server.SwaggerSpec, error) {
-	const api = "ipvs/GetSwaggerDocs"
-	ret := new(server.SwaggerSpec)
-	err := json.Unmarshal(rawSwagger, ret)
-	return ret, errors.Wrap(err, api)
-}
-
 var (
 	_ ipvs.IpvsAdminServer   = (*ipvsAdminSrv)(nil)
 	_ server.APIService      = (*ipvsAdminSrv)(nil)
 	_ server.APIGatewayProxy = (*ipvsAdminSrv)(nil)
 
-	//go:embed ipvs.swagger.json
-	rawSwagger []byte
+	//GetSwaggerDocs get swagger spec docs
+	GetSwaggerDocs = apiUtils.Ipvs.LoadSwagger
 )
 
 type ipvsAdminSrv struct {

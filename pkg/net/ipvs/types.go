@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/pkg/errors"
-	"github.com/thataway/ipvs/pkg/ipvs"
 )
 
 type (
@@ -71,7 +70,7 @@ var (
 //Valid ...
 func (np NetworkProtocol) Valid() error {
 	s := string(np)
-	if _, ok := ipvs.String2NetworkTransport[s]; !ok {
+	if _, ok := String2NetworkTransport[s]; !ok {
 		return errors.Wrapf(ErrUnsupported, "NetworkProtocol(%s)", s)
 	}
 	return nil
@@ -80,7 +79,7 @@ func (np NetworkProtocol) Valid() error {
 //Valid ...
 func (sm ScheduleMethod) Valid() error {
 	s := string(sm)
-	if _, ok := ipvs.String2ScheduleMethod[s]; !ok {
+	if _, ok := String2ScheduleMethod[s]; !ok {
 		return errors.Wrapf(ErrUnsupported, "ScheduleMethod(%s)", s)
 	}
 	return nil
@@ -89,7 +88,7 @@ func (sm ScheduleMethod) Valid() error {
 //Valid ...
 func (pf PacketForwarder) Valid() error {
 	s := string(pf)
-	if _, ok := ipvs.String2PacketFwdMethod[s]; !ok {
+	if _, ok := String2PacketFwdMethod[s]; !ok {
 		return errors.Wrapf(ErrUnsupported, "PacketForwarder(%s)", s)
 	}
 	return nil

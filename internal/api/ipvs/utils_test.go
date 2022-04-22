@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/thataway/ipvs/pkg/ipvs"
 	ipvsAdm "github.com/thataway/ipvs/pkg/net/ipvs"
+	"github.com/thataway/protos/pkg/api/ipvs"
 )
 
 func TestNetworkProtocolConv(t *testing.T) {
